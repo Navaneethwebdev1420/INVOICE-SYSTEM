@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoicing System - Invoices</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>📄 Invoicing System</h2>
+    <div class="nav-links">
+      <a href="/">Dashboard</a>
+      <a href="/invoices" class="active">Invoices</a>
+      <a href="/clients">Clients</a>
+      <a href="/products">Products</a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="page-header">
+      <h1>Invoices</h1>
+      <button class="btn btn-primary" onclick="openModal('invoiceModal')">+ New Invoice</button>
+    </div>
+
+    <!-- Search -->
+    <div class="search-bar">
+      <input type="text" id="searchInvoices" placeholder="Search invoices..." oninput="searchInvoices()">
+    </div>
+
+    <!-- Invoices Table -->
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Invoice #</th>
+            <th>Client</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="invoicesTable">
+          <tr>
+            <td colspan="6" class="empty-state">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Invoice Modal -->
+  <div class="modal" id="invoiceModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="invoiceModalTitle">New Invoice</h3>
+        <span class="close" onclick="closeModal('invoiceModal')">&times;</span>
+      </div>
+      <form id="invoiceForm" onsubmit="saveInvoice(event)">
+        <input type="hidden" id="invoiceId">
+        <div class="form-group">
+          <label>Client</label>
+          <select id="invoiceClient" required>
+            <option value="">Select Client</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" id="invoiceDueDate">
+        </div>
+        <div class="form-group">
+          <label>Items</label>
+          <div id="invoiceItems">
+            <div class="item-row">
+              <select class="item-product" onchange="updateItemPrice(this)">
+                <option value="">Select Product</option>
+              </select>
+              <input type="number" class="item-qty" placeholder="Qty" value="1" min="1" onchange="calcItemTotal(this)">
+              <input type="number" class="item-price" placeholder="Price" readonly>
+              <input type="number" class="item-total" placeholder="Total" readonly>
+              <button type="button" class="remove-item" onclick="removeItem(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-sm" onclick="addItem()">+ Add Item</button>
+        </div>
+        <div class="invoice-totals">
+          <div>Subtotal: $<span id="invoiceSubtotal">0</span></div>
+          <div>Tax: <input type="number" id="invoiceTax" value="0" style="width:60px;display:inline" onchange="calcInvoiceTotal()">%</div>
+          <div class="total">Total: $<span id="invoiceTotal">0</span></div>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="invoiceStatus">
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+            <option value="overdue">Overdue</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Invoice</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- View Invoice Modal -->
+  <div class="modal" id="viewInvoiceModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Invoice Details</h3>
+        <span class="close" onclick="closeModal('viewInvoiceModal')">&times;</span>
+      </div>
+      <div id="invoiceDetails"></div>
+      <button class="btn btn-primary" onclick="window.print()">Print</button>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadInvoices();
+      loadClientsForSelect();
+      loadProductsForSelect();
+    });
+  </script>
+</body>
+</html>

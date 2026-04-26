@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoicing System - Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>📄 Invoicing System</h2>
+    <div class="nav-links">
+      <a href="/" class="active">Dashboard</a>
+      <a href="/invoices">Invoices</a>
+      <a href="/clients">Clients</a>
+      <a href="/products">Products</a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="page-header">
+      <h1>Dashboard</h1>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total Invoices</h3>
+        <div class="value" id="totalInvoices">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Total Clients</h3>
+        <div class="value" id="totalClients">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Total Products</h3>
+        <div class="value" id="totalProducts">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Total Revenue</h3>
+        <div class="value" id="totalRevenue">$0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Pending Amount</h3>
+        <div class="value" id="pendingAmount">$0</div>
+      </div>
+    </div>
+
+    <!-- Recent Invoices -->
+    <div class="card">
+      <h2>Recent Invoices</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Invoice #</th>
+            <th>Client</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="recentInvoices">
+          <tr>
+            <td colspan="5" class="empty-state">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script>
+    // Load dashboard data
+    document.addEventListener('DOMContentLoaded', loadDashboard);
+  </script>
+</body>
+</html>
