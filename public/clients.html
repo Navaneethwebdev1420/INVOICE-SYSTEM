@@ -4,49 +4,119 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Invoicing System - Clients</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h2>📄 Invoicing System</h2>
-    <div class="nav-links">
-      <a href="/">Dashboard</a>
-      <a href="/invoices">Invoices</a>
-      <a href="/clients" class="active">Clients</a>
-      <a href="/products">Products</a>
+  <!-- Mobile Navbar -->
+  <nav class="navbar navbar-dark bg-dark d-lg-none">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">📄 Invoicing System</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+        <div class="position-sticky pt-3">
+          <h2 class="text-white px-3 mb-3">📄 Invoicing</h2>
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link text-white-50" href="/">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white-50" href="/invoices">Invoices</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active text-white" href="/clients">Clients</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white-50" href="/products">Products</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2">Clients</h1>
+          <button class="btn btn-primary" onclick="openModal('clientModal')">+ New Client</button>
+        </div>
+
+        <!-- Search -->
+        <div class="mb-3">
+          <input type="text" id="searchClients" class="form-control" placeholder="Search clients..." oninput="searchClients()">
+        </div>
+
+        <!-- Clients Table -->
+        <div class="card">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Address</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="clientsTable">
+                <tr>
+                  <td colspan="5" class="text-center text-muted py-4">Loading...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
     </div>
   </div>
 
-  <!-- Main Content -->
-  <div class="main-content">
-    <div class="page-header">
-      <h1>Clients</h1>
-      <button class="btn btn-primary" onclick="openModal('clientModal')">+ New Client</button>
+  <!-- Client Modal -->
+  <div class="modal fade" id="clientModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="clientModalTitle">New Client</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="clientForm" onsubmit="saveClient(event)">
+          <div class="modal-body">
+            <input type="hidden" id="clientId">
+            <div class="mb-3">
+              <label class="form-label">Name</label>
+              <input type="text" id="clientName" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" id="clientEmail" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Phone</label>
+              <input type="text" id="clientPhone" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Address</label>
+              <textarea id="clientAddress" class="form-control" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save Client</button>
+          </div>
+        </form>
+      </div>
     </div>
+  </div>
 
-    <!-- Search -->
-    <div class="search-bar">
-      <input type="text" id="searchClients" placeholder="Search clients..." oninput="searchClients()">
-    </div>
-
-    <!-- Clients Table -->
-    <div class="card">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Address</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="clientsTable">
-          <tr>
-            <td colspan="5" class="empty-state">Loading...</td>
-          </tr>
-        </tbody>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js"></script>
       </table>
     </div>
   </div>
@@ -59,28 +129,34 @@
         <span class="close" onclick="closeModal('clientModal')">&times;</span>
       </div>
       <form id="clientForm" onsubmit="saveClient(event)">
-        <input type="hidden" id="clientId">
-        <div class="form-group">
-          <label>Name</label>
-          <input type="text" id="clientName" required>
+        <div class="modal-body">
+          <input type="hidden" id="clientId">
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" id="clientName" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" id="clientEmail" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <input type="text" id="clientPhone" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Address</label>
+            <textarea id="clientAddress" class="form-control" rows="3"></textarea>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="clientEmail">
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save Client</button>
         </div>
-        <div class="form-group">
-          <label>Phone</label>
-          <input type="text" id="clientPhone">
-        </div>
-        <div class="form-group">
-          <label>Address</label>
-          <textarea id="clientAddress" rows="3"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Save Client</button>
       </form>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/main.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', loadClients);

@@ -4,118 +4,174 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Invoicing System - Invoices</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h2>📄 Invoicing System</h2>
-    <div class="nav-links">
-      <a href="/">Dashboard</a>
-      <a href="/invoices" class="active">Invoices</a>
-      <a href="/clients">Clients</a>
-      <a href="/products">Products</a>
+  <!-- Mobile Navbar -->
+  <nav class="navbar navbar-dark bg-dark d-lg-none">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">📄 Invoicing System</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+        <div class="position-sticky pt-3">
+          <h2 class="text-white px-3 mb-3">📄 Invoicing</h2>
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link text-white-50" href="/">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active text-white" href="/invoices">Invoices</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white-50" href="/clients">Clients</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white-50" href="/products">Products</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2">Invoices</h1>
+          <button class="btn btn-primary" onclick="openModal('invoiceModal')">+ New Invoice</button>
+        </div>
+
+        <!-- Search -->
+        <div class="mb-3">
+          <input type="text" id="searchInvoices" class="form-control" placeholder="Search invoices..." oninput="searchInvoices()">
+        </div>
+
+        <!-- Invoices Table -->
+        <div class="card">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Invoice #</th>
+                  <th>Client</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="invoicesTable">
+                <tr>
+                  <td colspan="6" class="text-center text-muted py-4">Loading...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
     </div>
   </div>
-
-  <!-- Main Content -->
-  <div class="main-content">
-    <div class="page-header">
-      <h1>Invoices</h1>
-      <button class="btn btn-primary" onclick="openModal('invoiceModal')">+ New Invoice</button>
-    </div>
-
-    <!-- Search -->
-    <div class="search-bar">
-      <input type="text" id="searchInvoices" placeholder="Search invoices..." oninput="searchInvoices()">
-    </div>
-
-    <!-- Invoices Table -->
-    <div class="card">
-      <table>
-        <thead>
-          <tr>
-            <th>Invoice #</th>
-            <th>Client</th>
-            <th>Total</th>
-            <th>Status</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="invoicesTable">
-          <tr>
-            <td colspan="6" class="empty-state">Loading...</td>
-          </tr>
         </tbody>
       </table>
     </div>
   </div>
 
   <!-- Invoice Modal -->
-  <div class="modal" id="invoiceModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="invoiceModalTitle">New Invoice</h3>
-        <span class="close" onclick="closeModal('invoiceModal')">&times;</span>
-      </div>
-      <form id="invoiceForm" onsubmit="saveInvoice(event)">
-        <input type="hidden" id="invoiceId">
-        <div class="form-group">
-          <label>Client</label>
-          <select id="invoiceClient" required>
-            <option value="">Select Client</option>
-          </select>
+  <div class="modal fade" id="invoiceModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="invoiceModalTitle">New Invoice</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="form-group">
-          <label>Due Date</label>
-          <input type="date" id="invoiceDueDate">
-        </div>
-        <div class="form-group">
-          <label>Items</label>
-          <div id="invoiceItems">
-            <div class="item-row">
-              <select class="item-product" onchange="updateItemPrice(this)">
-                <option value="">Select Product</option>
+        <form id="invoiceForm" onsubmit="saveInvoice(event)">
+          <div class="modal-body">
+            <input type="hidden" id="invoiceId">
+            <div class="mb-3">
+              <label class="form-label">Client</label>
+              <select id="invoiceClient" class="form-select" required>
+                <option value="">Select Client</option>
               </select>
-              <input type="number" class="item-qty" placeholder="Qty" value="1" min="1" onchange="calcItemTotal(this)">
-              <input type="number" class="item-price" placeholder="Price" readonly>
-              <input type="number" class="item-total" placeholder="Total" readonly>
-              <button type="button" class="remove-item" onclick="removeItem(this)">×</button>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Due Date</label>
+              <input type="date" id="invoiceDueDate" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Items</label>
+              <div id="invoiceItems">
+                <div class="row g-2 mb-2 align-items-center">
+                  <div class="col-5">
+                    <select class="form-select item-product" onchange="updateItemPrice(this)">
+                      <option value="">Select Product</option>
+                    </select>
+                  </div>
+                  <div class="col-2">
+                    <input type="number" class="form-control item-qty" placeholder="Qty" value="1" min="1" onchange="calcItemTotal(this)">
+                  </div>
+                  <div class="col-2">
+                    <input type="number" class="form-control item-price" placeholder="Price" readonly>
+                  </div>
+                  <div class="col-2">
+                    <input type="number" class="form-control item-total" placeholder="Total" readonly>
+                  </div>
+                  <div class="col-1">
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem(this)">×</button>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-outline-primary btn-sm" onclick="addItem()">+ Add Item</button>
+            </div>
+            <div class="text-end">
+              <div>Subtotal: $<span id="invoiceSubtotal">0</span></div>
+              <div class="d-inline-flex align-items-center">
+                Tax: <input type="number" id="invoiceTax" class="form-control form-control-sm w-50 ms-2" value="0" onchange="calcInvoiceTotal()">%
+              </div>
+              <div class="fs-5 fw-bold text-primary">Total: $<span id="invoiceTotal">0</span></div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Status</label>
+              <select id="invoiceStatus" class="form-select">
+                <option value="pending">Pending</option>
+                <option value="paid">Paid</option>
+                <option value="overdue">Overdue</option>
+              </select>
             </div>
           </div>
-          <button type="button" class="btn btn-sm" onclick="addItem()">+ Add Item</button>
-        </div>
-        <div class="invoice-totals">
-          <div>Subtotal: $<span id="invoiceSubtotal">0</span></div>
-          <div>Tax: <input type="number" id="invoiceTax" value="0" style="width:60px;display:inline" onchange="calcInvoiceTotal()">%</div>
-          <div class="total">Total: $<span id="invoiceTotal">0</span></div>
-        </div>
-        <div class="form-group">
-          <label>Status</label>
-          <select id="invoiceStatus">
-            <option value="pending">Pending</option>
-            <option value="paid">Paid</option>
-            <option value="overdue">Overdue</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Save Invoice</button>
-      </form>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save Invoice</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
   <!-- View Invoice Modal -->
-  <div class="modal" id="viewInvoiceModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Invoice Details</h3>
-        <span class="close" onclick="closeModal('viewInvoiceModal')">&times;</span>
+  <div class="modal fade" id="viewInvoiceModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Invoice Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="invoiceDetails"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button class="btn btn-primary" onclick="window.print()">Print</button>
+        </div>
       </div>
-      <div id="invoiceDetails"></div>
-      <button class="btn btn-primary" onclick="window.print()">Print</button>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/main.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
