@@ -1,18 +1,13 @@
 const API_URL = '/api';
-let bootstrapModal = {};
 
 // ============ UTILITY FUNCTIONS ============
 
 function openModal(modalId) {
-  const modalEl = document.getElementById(modalId);
-  const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-  modal.show();
+  document.getElementById(modalId).classList.add('active');
 }
 
 function closeModal(modalId) {
-  const modalEl = document.getElementById(modalId);
-  const modal = bootstrap.Modal.getInstance(modalEl);
-  if (modal) modal.hide();
+  document.getElementById(modalId).classList.remove('active');
 }
 
 function formatCurrency(amount) {
@@ -25,17 +20,11 @@ function formatDate(date) {
 }
 
 // Close modal when clicking outside
-document.addEventListener('click', function(event) {
+window.onclick = function(event) {
   if (event.target.classList.contains('modal')) {
-    const modal = bootstrap.Modal.getInstance(event.target);
-    if (modal) modal.hide();
+    event.target.classList.remove('active');
   }
-});
-
-// Initialize Bootstrap
-document.addEventListener('DOMContentLoaded', function() {
-  // Bootstrap is loaded via CDN
-});
+};
 
 // ============ DASHBOARD ============
 
@@ -58,9 +47,9 @@ async function loadDashboard() {
     // Show recent invoices
     const tbody = document.getElementById('recentInvoices');
     if (invoices.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">No invoices yet</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No invoices yet</td></tr>';
     } else {
-      tbody.innerHTML = invoices.slice(0, 5).map(inv => `
+      tbody.innerHTML = invoices.slice(0, 1).map(inv => `
         <tr>
           <td>${inv.invoiceNumber}</td>
           <td>${inv.clientName}</td>
@@ -84,7 +73,7 @@ async function loadClients() {
     
     const tbody = document.getElementById('clientsTable');
     if (clients.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">No clients yet</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No clients yet</td></tr>';
     } else {
       tbody.innerHTML = clients.map(client => `
         <tr>
@@ -184,7 +173,7 @@ async function loadProducts() {
     
     const tbody = document.getElementById('productsTable');
     if (products.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No products yet</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No products yet</td></tr>';
     } else {
       tbody.innerHTML = products.map(product => `
         <tr>
@@ -294,7 +283,6 @@ async function loadProductsForSelect() {
     const res = await fetch(`${API_URL}/products`);
     allProducts = await res.json();
     
-    // Update all product selects in invoice form
     document.querySelectorAll('.item-product').forEach(select => {
       select.innerHTML = '<option value="">Select Product</option>' +
         allProducts.map(p => `<option value="${p._id}" data-price="${p.price}" data-name="${p.name}">${p.name}</option>`).join('');
@@ -311,7 +299,7 @@ async function loadInvoices() {
     
     const tbody = document.getElementById('invoicesTable');
     if (invoices.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No invoices yet</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No invoices yet</td></tr>';
     } else {
       tbody.innerHTML = invoices.map(inv => `
         <tr>
@@ -335,26 +323,16 @@ async function loadInvoices() {
 function addItem() {
   const container = document.getElementById('invoiceItems');
   const div = document.createElement('div');
-  div.className = 'row g-2 mb-2 align-items-center';
+  div.className = 'item-row';
   div.innerHTML = `
-    <div class="col-5">
-      <select class="form-select item-product" onchange="updateItemPrice(this)">
-        <option value="">Select Product</option>
-        ${allProducts.map(p => `<option value="${p._id}" data-price="${p.price}" data-name="${p.name}">${p.name}</option>`).join('')}
-      </select>
-    </div>
-    <div class="col-2">
-      <input type="number" class="form-control item-qty" placeholder="Qty" value="1" min="1" onchange="calcItemTotal(this)">
-    </div>
-    <div class="col-2">
-      <input type="number" class="form-control item-price" placeholder="Price" readonly>
-    </div>
-    <div class="col-2">
-      <input type="number" class="form-control item-total" placeholder="Total" readonly>
-    </div>
-    <div class="col-1">
-      <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem(this)">×</button>
-    </div>
+    <select class="item-product" onchange="updateItemPrice(this)">
+      <option value="">Select Product</option>
+      ${allProducts.map(p => `<option value="${p._id}" data-price="${p.price}" data-name="${p.name}">${p.name}</option>`).join('')}
+    </select>
+    <input type="number" class="item-qty" placeholder="Qty" value="1" min="1" onchange="calcItemTotal(this)">
+    <input type="number" class="item-price" placeholder="Price" readonly>
+    <input type="number" class="item-total" placeholder="Total" readonly>
+    <button type="button" class="remove-item" onclick="removeItem(this)">×</button>
   `;
   container.appendChild(div);
 }
@@ -453,27 +431,16 @@ async function saveInvoice(e) {
     document.getElementById('invoiceForm').reset();
     document.getElementById('invoiceId').value = '';
     document.getElementById('invoiceTax').value = 0;
-    // Reset to single item row
     document.getElementById('invoiceItems').innerHTML = `
-      <div class="row g-2 mb-2 align-items-center">
-        <div class="col-5">
-          <select class="form-select item-product" onchange="updateItemPrice(this)">
-            <option value="">Select Product</option>
-            ${allProducts.map(p => `<option value="${p._id}" data-price="${p.price}" data-name="${p.name}">${p.name}</option>`).join('')}
-          </select>
-        </div>
-        <div class="col-2">
-          <input type="number" class="form-control item-qty" placeholder="Qty" value="1" min="1" onchange="calcItemTotal(this)">
-        </div>
-        <div class="col-2">
-          <input type="number" class="form-control item-price" placeholder="Price" readonly>
-        </div>
-        <div class="col-2">
-          <input type="number" class="form-control item-total" placeholder="Total" readonly>
-        </div>
-        <div class="col-1">
-          <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem(this)">×</button>
-        </div>
+      <div class="item-row">
+        <select class="item-product" onchange="updateItemPrice(this)">
+          <option value="">Select Product</option>
+          ${allProducts.map(p => `<option value="${p._id}" data-price="${p.price}" data-name="${p.name}">${p.name}</option>`).join('')}
+        </select>
+        <input type="number" class="item-qty" placeholder="Qty" value="1" min="1" onchange="calcItemTotal(this)">
+        <input type="number" class="item-price" placeholder="Price" readonly>
+        <input type="number" class="item-total" placeholder="Total" readonly>
+        <button type="button" class="remove-item" onclick="removeItem(this)">×</button>
       </div>
     `;
     calcInvoiceTotal();

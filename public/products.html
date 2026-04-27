@@ -4,114 +4,50 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Invoicing System - Products</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <!-- Mobile Navbar -->
-  <nav class="navbar navbar-dark bg-dark d-lg-none">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">📄 Invoicing System</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-    </div>
-  </nav>
-
-  <div class="container-fluid">
-    <div class="row">
-      <!-- Sidebar -->
-      <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
-        <div class="position-sticky pt-3">
-          <h2 class="text-white px-3 mb-3">📄 Invoicing</h2>
-          <ul class="nav flex-column">
-            <li class="nav-item">
-              <a class="nav-link text-white-50" href="/">Dashboard</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-white-50" href="/invoices">Invoices</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-white-50" href="/clients">Clients</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active text-white" href="/products">Products</a>
-            </li>
-          </ul>
-        </div>
-      </nav>
-
-      <!-- Main Content -->
-      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-          <h1 class="h2">Products</h1>
-          <button class="btn btn-primary" onclick="openModal('productModal')">+ New Product</button>
-        </div>
-
-        <!-- Search -->
-        <div class="mb-3">
-          <input type="text" id="searchProducts" class="form-control" placeholder="Search products..." oninput="searchProducts()">
-        </div>
-
-        <!-- Products Table -->
-        <div class="card">
-          <div class="table-responsive">
-            <table class="table table-hover mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Price</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="productsTable">
-                <tr>
-                  <td colspan="4" class="text-center text-muted py-4">Loading...</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </main>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>📄 Invoicing System</h2>
+    <div class="nav-links">
+      <a href="/">Dashboard</a>
+      <a href="/invoices">Invoices</a>
+      <a href="/clients">Clients</a>
+      <a href="/products" class="active">Products</a>
     </div>
   </div>
 
-  <!-- Product Modal -->
-  <div class="modal fade" id="productModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="productModalTitle">New Product</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <form id="productForm" onsubmit="saveProduct(event)">
-          <div class="modal-body">
-            <input type="hidden" id="productId">
-            <div class="mb-3">
-              <label class="form-label">Name</label>
-              <input type="text" id="productName" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Description</label>
-              <textarea id="productDescription" class="form-control" rows="3"></textarea>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Price</label>
-              <input type="number" id="productPrice" class="form-control" step="0.01" required>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save Product</button>
-          </div>
-        </form>
-      </div>
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="page-header">
+      <h1>Products</h1>
+      <button class="btn btn-primary" onclick="openModal('productModal')">+ New Product</button>
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/main.js"></script>
+    <!-- Search -->
+    <div class="search-bar">
+      <input type="text" id="searchProducts" placeholder="Search products..." oninput="searchProducts()">
+    </div>
+
+    <!-- Products Table -->
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="productsTable">
+          <tr>
+            <td colspan="4" class="empty-state">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -128,33 +64,21 @@
           <label>Name</label>
           <input type="text" id="productName" required>
         </div>
-        <form id="productForm" onsubmit="saveProduct(event)">
-          <div class="modal-body">
-            <input type="hidden" id="productId">
-            <div class="mb-3">
-              <label class="form-label">Name</label>
-              <input type="text" id="productName" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Description</label>
-              <textarea id="productDescription" class="form-control" rows="3"></textarea>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Price</label>
-              <input type="number" id="productPrice" class="form-control" step="0.01" required>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save Product</button>
-          </div>
-        </form>
-      </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="productDescription" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Price</label>
+          <input type="number" id="productPrice" step="0.01" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Product</button>
+      </form>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', loadProducts);
   </script>
